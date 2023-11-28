@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import time
 
-def findArucoLocation():
+def findArucoLocation_moveStopTest():
     # Load camera calibration parameters
     mtx = np.array([[1.44003309e+03, 0.00000000e+00, 6.86010223e+02],
                     [0.00000000e+00, 1.43870157e+03, 4.31888568e+02],
@@ -18,7 +18,7 @@ def findArucoLocation():
     parameters = cv2.aruco.DetectorParameters()
 
     # Open a connection to the camera (adjust the index as needed, typically 0 or 1)
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
 
     # Get the maximum supported resolution of the camera
     max_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))

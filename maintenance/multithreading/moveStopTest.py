@@ -3,7 +3,7 @@ import rtde_receive
 from math import pi
 import numpy as np 
 import threading
-from ArucoEstimationFor_moveStopTest import findArucoLocation
+from ArucoEstimationFor_moveStopTest import findArucoLocation_moveStopTest
 import time
 
 
@@ -78,13 +78,24 @@ def main():
     print(newPosition)
     # Add wanted payload
     #rtde_c.setPayload(3.0, [0,0,0.22])
+
+    pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+    pose2 = [0, 0, 0, 0, 0, 0]
+
+    pose3 = rtde_c.poseTrans(pose1, pose2)
+
+    pose3.extend([velocity, acceleration, blend_1])
+
+    newPosition = [pose3]
+
+
     
-    newPosition = [2.331293124080819, -1.810071159921117, -1.5096448437880934, 3.9344636379772604, -0.033758323199299056, -10.036966192907858]
+    #newPosition = [2.331293124080819, -1.810071159921117, -1.5096448437880934, 3.9344636379772604, -0.033758323199299056, -10.036966192907858]
     while True: 
         goHome()
-        rtde_c.moveJ(newPosition, velocity, acceleration, asynchronous = True)
+        rtde_c.moveL(newPosition, asynchronous = True)
         while True:
-            x_dist, y_dist, z_dist, ids = findArucoLocation()
+            x_dist, y_dist, z_dist, ids = findArucoLocation_moveStopTest()
             
             if ids is not None and not isinstance(ids, str) and ids.any(): 
                 rtde_c.stopJ(a=2.0, asynchronous = False)
