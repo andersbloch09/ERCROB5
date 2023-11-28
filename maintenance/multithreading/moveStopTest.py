@@ -3,11 +3,11 @@ import rtde_receive
 from math import pi
 import numpy as np 
 import threading
-#from ..mainFolder.gripperControl import gripperControl
+from ArucoEstimationFor_moveStopTest import findArucoLocation
 import time
 
 
-IP = "192.168.1.102"
+IP = "192.168.56.101"
 
 rtde_c = rtde_control.RTDEControlInterface(IP)
 rtde_r = rtde_receive.RTDEReceiveInterface(IP)
@@ -41,6 +41,7 @@ def goHome():
 
     #path = [pose3]
     rtde_c.moveJ(homeJoints, velocity, acceleration, asynchronous = False)
+    
 
 def rad2deg(list):
     newlist = []
@@ -72,26 +73,23 @@ def main():
     acceleration = 0.2
     blend_1 = 0.0
 
-    offset = rtde_c.getTCPOffset()
-
-    print(offset)
-
-    rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
+    rtde_c.setTcp([0, 0, 0.0, 0, 0, 0])
+    newPosition = rtde_r.getActualQ()
+    print(newPosition)
     # Add wanted payload
     #rtde_c.setPayload(3.0, [0,0,0.22])
-    newPosition = [1.6631979942321777, 2.1095922750285645, -2.049259662628174, 3.189222975368164, -0.6959036032306116, -9.445799001047405]
-
-    startTime = time.time()
-    checkTime = time.time()
-
-    goHome()
-    rtde_c.moveJ(newPosition, velocity, acceleration, asynchronous = True)
-    while True:
-        checkTime = time.time()
-        print(checkTime - startTime)
-        if checkTime - startTime > 5: 
-            rtde_c.stopJ(a=2.0, asynchronous = False)
-        
+    
+    newPosition = [2.331293124080819, -1.810071159921117, -1.5096448437880934, 3.9344636379772604, -0.033758323199299056, -10.036966192907858]
+    while True: 
+        goHome()
+        rtde_c.moveJ(newPosition, velocity, acceleration, asynchronous = True)
+        while True:
+            x_dist, y_dist, z_dist, ids = findArucoLocation()
+            
+            if ids is not None and not isinstance(ids, str) and ids.any(): 
+                rtde_c.stopJ(a=2.0, asynchronous = False)
+                print(x_dist, y_dist, z_dist, ids)
+                break
 
 
 
