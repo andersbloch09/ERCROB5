@@ -2,10 +2,9 @@ import rtde_control
 import rtde_receive
 from math import pi
 import numpy as np 
-from CameraOffset import buttonLocation
-from ArucoEstimation import findArucoLocation
-from gripperControl import gripperControl
-import multiprocessing
+from mainFolder.CameraOffset import buttonLocation
+from mainFolder.ArucoEstimation import findArucoLocation
+from mainFolder.gripperControl import gripperControl
 
 IP = "192.168.1.102"
 
@@ -24,12 +23,12 @@ class buttonObject():
         self.loc = loc
         self.boardNumber = boardNumber
 
-
 def getGridLength(pose1, velocity, acceleration, blend):
     gridButtons = []
     y = -0.04
     x = -0.02
     zeroPose = [0, 0, 0, 0, 0, 0]
+    
     # Add center button to gridButtons for reference
     x_dist, y_dist, z_dist, ids = findArucoLocation()
     buttonPos = buttonLocation(zeroPose, x_dist, y_dist, z_dist)
