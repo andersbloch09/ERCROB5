@@ -6,6 +6,8 @@ from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from multithreading.ArucoEstimationFor_moveStopTest import findArucoLocation_moveStopTest
 from mainFolder.gripperControl import gripperControl
+import math
+
 
 IP = "192.168.1.102"
 
@@ -24,16 +26,20 @@ class buttonObject():
         self.loc = loc
         self.boardNumber = boardNumber
 
+def calculate_vector_length(x, y):
+    length = math.sqrt(x**2 + y**2)
+    return length
+
 def getGridLength(homeBoardPose):
-    velocity = 0.1
-    acceleration = 0.1
+    velocity = 0.02
+    acceleration = 0.05
     blend = 0.0
 
     gridButtons = []
     zeroPose = [0, 0, 0, 0, 0, 0]
     
-    y = 0.5
-    x = 0.3
+    y = -0.5
+    x = -0.2
 
     # Add center button to gridButtons for reference
     x_dist, y_dist, z_dist, ids = findArucoLocation()
@@ -59,20 +65,21 @@ def getGridLength(homeBoardPose):
         if ids is not None and not isinstance(ids, str) and ids.any():
                 if gridButtons[0].id != ids[0][0]:
                     pose2 = rtde_r.getActualTCPPose()
-                    rtde_c.stopL(a=2.0, asynchronous = False)
+                    rtde_c.stopL(a=3.0, asynchronous = False)
+                    pose2 = [0,pose2[2] - homeBoardPose[2],0,0,0,0]
                     buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
                     topRef = buttonObject(ids[0][0], buttonPos, 4)
 
                     gridButtons.append(topRef)
                     break
     
-    pose2[0] = x
+    pose2 = [x, -pose2[1],0,0,0,0]
+    print(pose2)
+    pose3 = rtde_c.poseTrans(homeBoardPose, pose2)
 
-    pose2 = rtde_c.poseTrans(homeBoardPose, pose2)
+    pose3.extend([acceleration, velocity, blend])
 
-    pose2.extend([acceleration, velocity, blend])
-
-    path = [pose2]
+    path = [pose3]
 
     rtde_c.moveL(path, asynchronous = True)
     
@@ -82,9 +89,10 @@ def getGridLength(homeBoardPose):
         # Check for found buttons
         if ids is not None and not isinstance(ids, str) and ids.any():
             if gridButtons[1].id != ids[0][0]:
-                pose2 = rtde_r.getActualTCPPose()
-                rtde_c.stopL(a=2.0, asynchronous = False)
-                buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
+                pose3 = rtde_r.getActualTCPPose()
+                rtde_c.stopL(a=3.0, asynchronous = False)
+                pose4 = [-10*(calculate_vector_length(pose3[0], pose3[1]) - calculate_vector_length(homeBoardPose[0], homeBoardPose[1])), pose2[1],0,0,0,0]
+                buttonPos = buttonLocation(pose4, x_dist, y_dist, z_dist)
                 leftRef = buttonObject(ids[0][0], buttonPos, 4)
 
                 gridButtons.append(leftRef)
@@ -93,7 +101,10 @@ def getGridLength(homeBoardPose):
 
     yLenght = abs(gridButtons[0].loc[1]) + abs(gridButtons[1].loc[1])
     xLenght = abs(gridButtons[1].loc[0]) + abs(gridButtons[2].loc[0])
+    print("1",abs(gridButtons[0].loc[1]))
+    print("2",abs(gridButtons[1].loc[1]))
     
+    print(xLenght, yLenght)
     return xLenght, yLenght
 
 
@@ -174,9 +185,10 @@ def gridRun(homeBoardPose, velocity, acceleration, blend, xLenth, yLength):
             
             boardNumber += 1
             
-            pose2 = [-xLenth + x, -yLength + y, 0, 0, 0, 0]
+            pose5 = [-xLenth + x, -yLength + y, 0, 0, 0, 0]
+            print(pose5)
         
-            pose3 = rtde_c.poseTrans(homeBoardPose, pose2)
+            pose3 = rtde_c.poseTrans(homeBoardPose, pose5)
 
             pose3.extend([velocity, acceleration, blend])
 
@@ -188,7 +200,7 @@ def gridRun(homeBoardPose, velocity, acceleration, blend, xLenth, yLength):
            
             # Check for found buttons 
             if ids is not None and not isinstance(ids, str) and ids.any(): 
-                buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
+                buttonPos = buttonLocation(pose5, x_dist, y_dist, z_dist)
                 button = buttonObject(ids[0][0], buttonPos, boardNumber)
 
                 buttonList.append(button)
@@ -221,7 +233,7 @@ def main():
 
     homeBoardPose = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
 
-    xLenth, yLength = getGridLength(homeBoardPose, velocity, acceleration, blend_1)
+    xLenth, yLength = getGridLength(homeBoardPose)
 
     gridRun(homeBoardPose, velocity, acceleration, blend_1, xLenth, yLength)
 
