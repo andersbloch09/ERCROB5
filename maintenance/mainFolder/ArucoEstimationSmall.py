@@ -11,7 +11,7 @@ def findArucoLocation():
     dist = np.array([[7.29890166e-02, -7.14335748e-01, 1.44494297e-02, 9.08325864e-04, 7.15318943e+00]])
 
     # Known size of the ArUco marker in real-world units (e.g., in meters)
-    aruco_marker_size = 0.05 # Adjust this based on the actual size of your ArUco marker
+    aruco_marker_size = 0.04 # Adjust this based on the actual size of your ArUco marker
 
     # ArUco dictionary and parameters
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_ARUCO_ORIGINAL)
@@ -58,7 +58,13 @@ def findArucoLocation():
                 z_distance   = tvec[0, 0, 2]
                 y_distance   = tvec[0, 0, 1]
                 x_distance   = tvec[0, 0, 0]
-            
+                
+
+
+                values = cv2.Rodrigues(rvec)
+                rotation_matrix = values[0]
+                print(rotation_matrix)
+
                 # Display the distance for each marker
                 cv2.putText(frame, f"Marker {ids[i][0]} Distance: {z_distance:.2f} meters", (10, 30 + i * 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
@@ -71,8 +77,10 @@ def findArucoLocation():
                 cv2.drawFrameAxes(frame, mtx, dist, rvec[0], tvec[0], 0.1)
 
                 if tvec.any():
-                    return x_distance, y_distance, z_distance, ids
+                    return x_distance, y_distance, z_distance, ids, rotation_matrix
         else: 
             x_distance, y_distance, z_distance, ids = 0, 0, 0, ""
-            return x_distance, y_distance, z_distance, ids
+            rotation_matrix = []
+            return x_distance, y_distance, z_distance, ids, rotation_matrix
+
 

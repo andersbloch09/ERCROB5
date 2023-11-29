@@ -15,7 +15,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 #images = glob.glob('/home/rob5564/Pictures/Webcam/*.jpg')
 #"/home/rob5564/Desktop/ERC/cv/Calibration/chessboards/*.jpg"
-images = glob.glob('/home/rob5564/Desktop/ERC/cv/Calibration/chessboard1/*.jpg')
+images = glob.glob('/home/rob5564/Desktop/ERCROB5IMU/maintenance/cameraCal/Calibration/chessboard2/*.jpg')
 #'/home/rob5564/Pictures/Webcam/*.jpg'
 
 for fname in images:

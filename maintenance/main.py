@@ -14,7 +14,7 @@ rtde_r = rtde_receive.RTDEReceiveInterface(IP)
 gripperOpen = "open"
 gripperClosed = "close"
 
-buttonString = "561"
+buttonString = "562"
 buttonList = []
 
 class buttonObject():
@@ -222,6 +222,9 @@ def main():
     clickButton(pose1, velocity, acceleration, blend_1)
 
     goHome()
+
+    
+
 
 if __name__ == "__main__":
     main()
