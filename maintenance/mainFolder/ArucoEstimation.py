@@ -20,10 +20,6 @@ def findArucoLocation():
     # Open a connection to the camera (adjust the index as needed, typically 0 or 1)
     cap = cv2.VideoCapture(2)
 
-    # Get the maximum supported resolution of the camera
-    max_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    max_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
     # Set the video capture object to use the maximum resolution
@@ -44,7 +40,6 @@ def findArucoLocation():
 
         # Detect ArUco markers
         corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
-        obj_points = np.array([[0,0,0],[aruco_marker_size,0,0], [aruco_marker_size, aruco_marker_size,0], [0, aruco_marker_size,0]], dtype=np.float32)
 
         if ids is not None:
             # Draw the detected markers on the frame

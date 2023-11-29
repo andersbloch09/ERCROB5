@@ -10,6 +10,9 @@ IP = "192.168.1.102"
 rtde_c = rtde_control.RTDEControlInterface(IP)
 rtde_r = rtde_receive.RTDEReceiveInterface(IP)
 
+
+# This script is used to make the robot end effector rotate relative to an aruco marker
+
 def rotationToEuler(rotation_matrix):
     # Convert rotation matrix to Euler angles (XYZ convention)
     rotation = Rotation.from_matrix(rotation_matrix)

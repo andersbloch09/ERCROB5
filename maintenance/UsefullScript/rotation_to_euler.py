@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-
-def rotationToEuler(rotation_matrix):
+def rotationToEuler():
     # Assuming you have a rotation matrix
     rotation_matrix = np.array([[-0.562713  , -0.82612145,  0.02962155],
         [-0.79344472,  0.54981556,  0.26105234],

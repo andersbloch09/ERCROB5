@@ -1,7 +1,7 @@
 import rtde_control
 import rtde_receive
 from math import pi
-import numpy as np 
+import numpy as np
 from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
@@ -16,22 +16,22 @@ gripperOpen = "open"
 gripperClosed = "close"
 gripperImuBox = "imu"
 gripperSecretLid = "secretLid"
-
 buttonString = "562"
 buttonList = []
 
+
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
-        self.id = id 
+        self.id = id
         self.loc = loc
         self.boardNumber = boardNumber
+
 
 def getGridLength(pose1, velocity, acceleration, blend):
     gridButtons = []
     y = -0.04
     x = -0.02
     zeroPose = [0, 0, 0, 0, 0, 0]
-    
     # Add center button to gridButtons for reference
     x_dist, y_dist, z_dist, ids = findArucoLocation()
     buttonPos = buttonLocation(zeroPose, x_dist, y_dist, z_dist)
@@ -41,21 +41,19 @@ def getGridLength(pose1, velocity, acceleration, blend):
 
     while len(gridButtons) < 2:
         x_dist, y_dist, z_dist, ids = findArucoLocation()
-        
         # Check for found buttons
         if ids is not None and not isinstance(ids, str) and ids.any():
-                if gridButtons[0].id != ids[0][0]:
-                    buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
-                    topRef = buttonObject(ids[0][0], buttonPos, 4)
+            if gridButtons[0].id != ids[0][0]:
+                buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
+                topRef = buttonObject(ids[0][0], buttonPos, 4)
 
-                    gridButtons.append(topRef)
-                    break
-    
+                gridButtons.append(topRef)
+                break
 
         y -= 0.04
         pose2 = [0, y, 0, 0, 0, 0]
         poseFound = rtde_c.poseTrans(pose1, pose2)
-        
+
         poseFound.extend([velocity, acceleration, blend])
 
         path = [poseFound]
@@ -91,6 +89,7 @@ def getGridLength(pose1, velocity, acceleration, blend):
     
     return xLenght, yLenght
 
+
 def goHome():
     velocity = 3
     acceleration = 3
@@ -110,6 +109,7 @@ def goHome():
     #path = [pose3]
 
     rtde_c.moveJ(homeJoints, velocity, acceleration, blend_1)
+
 
 def clickButton(pose1, velocity, acceleration, blend):
     gripperControl(gripperClosed)
@@ -148,6 +148,7 @@ def rad2deg(list):
 
     return newlist
 
+
 def deg2rad(list):
     newlist = []
     for j in range(3):
@@ -156,6 +157,7 @@ def deg2rad(list):
         newlist.append(list[i]*pi/180)
 
     return newlist
+
 
 def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength): 
     
@@ -189,7 +191,8 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
 
     for k in range(len(buttonList)):
         print(buttonList[k].id)
-            
+
+
 def ImuBoxTask(): 
 
     goToImuTable(rtde_c, gripperOpen)

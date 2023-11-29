@@ -24,12 +24,14 @@ def findArucoLocation():
     max_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     max_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+    # Removes autofocus
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
     # Set the video capture object to use the maximum resolution
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
+    # Create timers to let the scan run for 2 seconds
     checkTime = time.time()
     startTime = time.time()
     while checkTime - startTime < 2:
@@ -44,7 +46,6 @@ def findArucoLocation():
 
         # Detect ArUco markers
         corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
-        obj_points = np.array([[0,0,0],[aruco_marker_size,0,0], [aruco_marker_size, aruco_marker_size,0], [0, aruco_marker_size,0]], dtype=np.float32)
 
         if ids is not None:
             # Draw the detected markers on the frame
@@ -59,14 +60,11 @@ def findArucoLocation():
                 y_distance   = tvec[0, 0, 1]
                 x_distance   = tvec[0, 0, 0]
                 
-
-
+                # This matrix is used to find the euler values of the rotation matrix based on the angle axis values from the aruco orientation
                 values = cv2.Rodrigues(rvec)
                 rotation_matrix = values[0]
                 print(rotation_matrix)
 
-
-                #print(x_distance,",", y_distance,",", z_distance)
                 # Display the distance for each marker
                 cv2.putText(frame, f"Marker {ids[i][0]} Distance: {z_distance:.2f} meters", (10, 30 + i * 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
@@ -85,16 +83,3 @@ def findArucoLocation():
             rotation_matrix = []
             return x_distance, y_distance, z_distance, ids, rotation_matrix
 
-
-
-        # Display the frame
-        #cv2.imshow('Distance Estimation to ArUco Markers', frame)
-
-        # Break the loop if 'ESC' is pressed
-        #if cv2.waitKey(1) & 0xFF == 27:
-        #    break
-        
-
-    # Release the camera
-    #cap.release()
-    #cv2.destroyAllWindows()
