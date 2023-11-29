@@ -18,3 +18,10 @@ def buttonLocation(currentRobotLocation, x_initial, y_initial, z_initial):
     print("Button location:", buttonPos[0],",",buttonPos[1],",",buttonPos[2])
     return buttonPos
 
+def imuBoxLocation(x_initial, y_initial, z_initial, z_rot):
+    translationVectorNewFrame = np.array([0, -0.01, -0.17])
+    grabLocation = np.array([0, 0, 0.06])
+
+    point_final_new_frame =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + grabLocation
+
+    print(point_final_new_frame)

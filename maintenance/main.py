@@ -5,6 +5,7 @@ import numpy as np
 from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
+from mainFolder.imuBoxMovement import goToImuTable, findImuBox
 
 IP = "192.168.1.102"
 
@@ -13,6 +14,8 @@ rtde_r = rtde_receive.RTDEReceiveInterface(IP)
 
 gripperOpen = "open"
 gripperClosed = "close"
+gripperImuBox = "imu"
+gripperSecretLid = "secretLid"
 
 buttonString = "562"
 buttonList = []
@@ -87,7 +90,6 @@ def getGridLength(pose1, velocity, acceleration, blend):
     xLenght = abs(gridButtons[1].loc[0]) + abs(gridButtons[2].loc[0])
     
     return xLenght, yLenght
-
 
 def goHome():
     velocity = 3
@@ -188,6 +190,10 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
     for k in range(len(buttonList)):
         print(buttonList[k].id)
             
+def ImuBoxTask(): 
+
+    goToImuTable(rtde_c, gripperOpen)
+    findImuBox()
 
 
 def main():
@@ -213,17 +219,17 @@ def main():
 
     pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
 
-    xLenth, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
+    #xLenth, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
 
-    gridRun(pose1, velocity, acceleration, blend_1, xLenth, yLength)
+    #gridRun(pose1, velocity, acceleration, blend_1, xLenth, yLength)
+
+    #goHome()
+
+    #clickButton(pose1, velocity, acceleration, blend_1)
 
     goHome()
 
-    clickButton(pose1, velocity, acceleration, blend_1)
-
-    goHome()
-
-    
+    ImuBoxTask()
 
 
 if __name__ == "__main__":

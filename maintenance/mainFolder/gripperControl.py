@@ -18,8 +18,12 @@ def gripperControl(state = "open"):
         angleset = 180
     if state == "close":
         angleset = 60
+    if state == "imu":
+        angleset = 120
+    if state == "secretLid":
+        angleset = 100
+   
     angle = int(angleset)
     if 60 <= angle <= 180:
         arduino.write((str(angle)).encode('utf-8'))
     time.sleep(2)
-

@@ -56,11 +56,12 @@ while True:
         break
 #home = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(35)]
 
-
 #pose_test = [0.34, 0.34, 0.285, np.radians(-84.92322114),  np.radians(35),  np.radians(-35)]
 
 #inv = rtde_c.getInverseKinematics(pose_test)
 
-pickPose = rtde_c.poseTrans(framePose, poseInFramePose)
+pickPose = rtde_c.poseTrans(framePose, zero)
+joints = rtde_r.getActualQ()
+print(joints)
 
 rtde_c.moveL(pickPose, velocity, acceleration, blend)
