@@ -18,10 +18,29 @@ def buttonLocation(currentRobotLocation, x_initial, y_initial, z_initial):
     print("Button location:", buttonPos[0],",",buttonPos[1],",",buttonPos[2])
     return buttonPos
 
-def imuBoxLocation(x_initial, y_initial, z_initial, z_rot):
+def imuBoxLocationPickup(z_initial):
+    translationVectorNewFrame = np.array([-0.17])
+    grabTranslation = np.array([0.06])
+
+    point_final_new_frame =  np.array([z_initial]) + translationVectorNewFrame + grabTranslation
+    print("z_DIST", point_final_new_frame)
+    return point_final_new_frame
+
+def imuBoxLocationFit(x_initial, y_initial, z_initial):
+    translationVectorNewFrame = np.array([0, 0.01, -0.17])
+
+    boxFitLoc =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame
+
+    print("Box Fit Loc", boxFitLoc)
+
+    return boxFitLoc
+
+def arucoToBoardImu(x_initial, y_initial, z_initial):
     translationVectorNewFrame = np.array([0, -0.01, -0.17])
-    grabLocation = np.array([0, 0, 0.06])
+    boardCenter = np.array([0.09, 0.15, 0])
 
-    point_final_new_frame =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + grabLocation
+    boardCenterImu =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + boardCenter
 
-    print(point_final_new_frame)
+    print("BoardCenterImu", boardCenterImu)
+
+    return boardCenterImu

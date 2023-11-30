@@ -45,18 +45,18 @@ tcp_pose = rad2deg(tcp_pose)
 
 print(tcp_pose)
 
-framePose = [0.0463559417774228, 0.24843588058249952, 0.17441032897587316, 
-              np.radians(-165.44384144), np.radians(68.5), np.radians(-0.59804425)]
+framePose = [-0.01663474656286537, 0.2674566902637054, 0.4439993492629446, 
+              np.radians(-85), np.radians(24), np.radians(-25)]
 
 zero = [0,0,0,0,0,0]
 
-while True:
-    x_distance, y_distance, z_distance, ids, rotation_matrix = findArucoLocation()
-    if ids is not None and not isinstance(ids, str) and ids.any():
-        z_rot = rotationToEuler(rotation_matrix)
-        poseInFramePose = [0, 0, 0, 0, 0, np.radians(z_rot - 90)]
-        print(poseInFramePose)
-        break
+#while True:
+    #x_distance, y_distance, z_distance, ids, rotation_matrix = findArucoLocation()
+    #if ids is not None and not isinstance(ids, str) and ids.any():
+        #z_rot = rotationToEuler(rotation_matrix)
+        #poseInFramePose = [0, 0, 0, 0, 0, np.radians(z_rot - 90)]
+        #print(poseInFramePose)
+        #break
 #home = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(35)]
 
 #pose_test = [0.34, 0.34, 0.285, np.radians(-84.92322114),  np.radians(35),  np.radians(-35)]

@@ -28,7 +28,7 @@ def findArucoLocation():
 
     checkTime = time.time()
     startTime = time.time()
-    while checkTime - startTime < 2:
+    while True:
         
         checkTime = time.time()
 
@@ -54,11 +54,8 @@ def findArucoLocation():
                 y_distance   = tvec[0, 0, 1]
                 x_distance   = tvec[0, 0, 0]
                 
-
-
                 values = cv2.Rodrigues(rvec)
                 rotation_matrix = values[0]
-                print(rotation_matrix)
 
                 # Display the distance for each marker
                 cv2.putText(frame, f"Marker {ids[i][0]} Distance: {z_distance:.2f} meters", (10, 30 + i * 30),

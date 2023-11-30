@@ -11,19 +11,20 @@ def gripperControl(state = "open"):
     try:
         arduino = serial.Serial(args.usb_port, 9600)  # Adjust the baud rate accordingly
         print("Serial device connected!")
+        print(state)
+        if state == "open":
+            angleset = 180
+        if state == "close":
+            angleset = 60
+        if state == "imu":
+            angleset = 120
+        if state == "secretLid":
+            angleset = 100
+    
+        angle = int(angleset)
+        if 60 <= angle <= 180:
+            arduino.write((str(angle)).encode('utf-8'))
     except serial.SerialException as e:
         print(f"Failed to connect to {args.usb_port}: {e}")
-    print(state)
-    if state == "open":
-        angleset = 180
-    if state == "close":
-        angleset = 60
-    if state == "imu":
-        angleset = 120
-    if state == "secretLid":
-        angleset = 100
-   
-    angle = int(angleset)
-    if 60 <= angle <= 180:
-        arduino.write((str(angle)).encode('utf-8'))
+    
     time.sleep(2)

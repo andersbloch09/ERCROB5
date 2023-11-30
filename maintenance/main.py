@@ -5,7 +5,7 @@ import numpy as np
 from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
-from mainFolder.imuBoxMovement import goToImuTable, findImuBox
+from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
 
 IP = "192.168.1.102"
 
@@ -16,9 +16,12 @@ gripperOpen = "open"
 gripperClosed = "close"
 gripperImuBox = "imu"
 gripperSecretLid = "secretLid"
-buttonString = "562"
+
 buttonList = []
 
+buttonString = "562"
+
+imuAngle = 45
 
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
@@ -139,16 +142,6 @@ def clickButton(pose1, velocity, acceleration, blend):
                 rtde_c.moveL(path)
 
 
-def rad2deg(list):
-    newlist = []
-    for j in range(3):
-        newlist.append(list[j])
-    for i in range(3, 6):
-        newlist.append(list[i] * (180/pi))
-
-    return newlist
-
-
 def deg2rad(list):
     newlist = []
     for j in range(3):
@@ -194,18 +187,14 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
 
 
 def ImuBoxTask(): 
-
-    goToImuTable(rtde_c, gripperOpen)
-    findImuBox()
-
+    boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
+    goToImuTable(rtde_c)
+    findImuBox(rtde_c, rtde_r, gripperImuBox)
+    goToImuTable(rtde_c)
+    placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen)
+    
 
 def main():
-    tcp_pose = rtde_r.getActualTCPPose()
-
-    tcp_pose = rad2deg(tcp_pose)
-
-    print(tcp_pose)
-
     velocity = 0.33
     acceleration = 0.33
     blend_1 = 0.0
@@ -230,9 +219,11 @@ def main():
 
     #clickButton(pose1, velocity, acceleration, blend_1)
 
-    goHome()
+    #goHome()
 
     ImuBoxTask()
+
+    goHome()
 
 
 if __name__ == "__main__":
