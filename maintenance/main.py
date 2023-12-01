@@ -21,7 +21,7 @@ buttonList = []
 
 buttonString = "562"
 
-imuAngle = 45
+imuAngle = -45
 
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
@@ -190,7 +190,7 @@ def ImuBoxTask():
     boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
     goToImuTable(rtde_c)
     findImuBox(rtde_c, rtde_r, gripperImuBox)
-    goToImuTable(rtde_c)
+    #goToImuTable(rtde_c)
     placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen)
     
 

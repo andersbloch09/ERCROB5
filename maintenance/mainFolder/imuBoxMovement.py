@@ -5,6 +5,7 @@ from . import ArucoEstimation as ArucoEst
 from scipy.spatial.transform import Rotation
 from . import CameraOffset as co
 from math import pi
+import time
 
 def rotationToEuler(rotation_matrix):
     # Convert rotation matrix to Euler angles (XYZ convention)
@@ -127,7 +128,7 @@ def scanImuBoardLoc(rtde_c, rtde_r):
 
 
     # these angles should be changes
-    boardPoseRef = [boardPoseRef[0], boardPoseRef[1], boardPoseRef[2], np.radians(-90), np.radians(21.4), np.radians(-49)]
+    boardPoseRef = [boardPoseRef[0], boardPoseRef[1], boardPoseRef[2], np.deg2rad(-86.7), np.deg2rad(23.2), np.deg2rad(-23.6)]
 
     boardPose = [boardPose[0], boardPose[1], boardPose[2], 0, 0, 0]
 
@@ -137,29 +138,35 @@ def placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen):
     velocity = 0.2
     acceleration = 0.2
     blend = 0.0
+
+    boardScan = rtde_c.getInverseKinematics(boardPoseRef)
     
-    boardScan = [2.127626895904541, -1.622178693810934, -1.3549747467041016, 3.5395304399677734, -0.5716679731952112, -9.864086278269085]
+    #boardScan = [2.127626895904541, -1.622178693810934, -1.3549747467041016, 3.5395304399677734, -0.5716679731952112, -9.864086278269085]
 
     rtde_c.moveJ(boardScan, velocity, acceleration)
 
-    velocity = 0.8
-    acceleration = 0.8
+    velocity = 0.5
+    acceleration = 0.5
     blend = 0.0
 
-    boardPose[2] = boardPose[2] + 0.00
+    boardPose[2] = boardPose[2] - 0.07
     boardPose[5] = imuAngle
 
     boxPosRef = rtde_c.poseTrans(boardPoseRef, boardPose)
 
     rtde_c.moveL(boxPosRef, velocity, acceleration, blend)
 
-    boardPose[2] = boardPose[2]
+    boardPose[2] = boardPose[2] + 0.08
 
     boxPosRef = rtde_c.poseTrans(boardPoseRef, boardPose)
 
     rtde_c.moveL(boxPosRef, velocity, acceleration, blend)
-
-    boardPose[2] = boardPose[2] - 0.04
+    
+    gripperControl.gripperControl(gripperOpen)
+    
+    time.sleep(1)
+    
+    boardPose[2] = boardPose[2] - 0.07
 
     boxPosRef = rtde_c.poseTrans(boardPoseRef, boardPose)
 
