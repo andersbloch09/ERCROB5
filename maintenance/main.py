@@ -6,6 +6,7 @@ from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
 from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
+from mainFolder.secretBoxMovement import scanTable
 
 IP = "192.168.1.102"
 
@@ -114,12 +115,12 @@ def goHome(state=gripperOpen):
     rtde_c.moveJ(homeJoints, velocity, acceleration, blend_1)
 
 
-def clickButton(pose1, velocity, acceleration, blend):
+def clickButton(pose1, velocity, acceleration, blend, bString):
     gripperControl(gripperClosed)
     buttonDepth = 0.009
 
-    for j in range(len(buttonString)):
-        currentTarget = buttonString[j]
+    for j in range(len(bString)):
+        currentTarget = bString[j]
         currentTarget = int(currentTarget)
         for i in buttonList:
             #If the first target matches the ArUco ID in the array then go to the location of the ArUco ID with 5 cm distance on the Z-axis
@@ -175,7 +176,8 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
 
             x_dist, y_dist, z_dist, ids = findArucoLocation()
            
-            # Check for found buttons 
+            # Check for found buttons
+            # Maybe add while loop here to ensure button detection before further movement
             if ids is not None and not isinstance(ids, str) and ids.any(): 
                 buttonPos = buttonLocation(pose2, x_dist, y_dist, z_dist)
                 button = buttonObject(ids[0][0], buttonPos, boardNumber)
@@ -209,10 +211,15 @@ def boardTask():
 
     goHome()
 
-    clickButton(pose1, velocity, acceleration, blend_1)
+    clickButton(pose1, velocity, acceleration, blend_1, buttonString)
+
 
 def secretBoxTask():
+    talbeFitLoc = scanTable(rtde_c, rtde_r)
+
+    
     tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
+
 
 def main():
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
@@ -225,11 +232,11 @@ def main():
 
     #ImuBoxTask()
 
-    #goHome()
+    goHome()
 
     secretBoxTask()
 
-    goHome()
+    #goHome()
 
 
 if __name__ == "__main__":

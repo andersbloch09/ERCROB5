@@ -44,3 +44,13 @@ def arucoToBoardImu(x_initial, y_initial, z_initial):
     print("BoardCenterImu", boardCenterImu)
 
     return boardCenterImu
+
+def lidTalbeLoc(x_initial, y_initial, z_initial):
+    translationVectorNewFrame = np.array([0, -0.01, -0.17])
+    tableCenter = np.array([0.07, 0.085, 0])
+
+    lidPlacement =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + tableCenter
+
+    print("lidPlacement", lidPlacement)
+
+    return lidPlacement

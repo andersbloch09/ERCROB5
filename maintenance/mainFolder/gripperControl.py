@@ -19,7 +19,7 @@ def gripperControl(state = "open"):
         if state == "imu":
             angleset = 115
         if state == "secretLid":
-            angleset = 100
+            angleset = 95
     
         angle = int(angleset)
         if 60 <= angle <= 180:
@@ -28,3 +28,4 @@ def gripperControl(state = "open"):
         print(f"Failed to connect to {args.usb_port}: {e}")
     
     time.sleep(2)
+gripperControl(state="secretLid")
