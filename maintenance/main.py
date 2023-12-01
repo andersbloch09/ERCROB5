@@ -93,12 +93,12 @@ def getGridLength(pose1, velocity, acceleration, blend):
     return xLenght, yLenght
 
 
-def goHome():
+def goHome(state=gripperOpen):
     velocity = 3
     acceleration = 3
     blend_1 = 0.0
 
-    gripperControl(gripperOpen)
+    gripperControl(state)
     homeJoints = [1.6631979942321777, -1.1095922750285645, -2.049259662628174, 3.189222975368164, -0.6959036032306116, -9.445799001047405]
 
     # This i for moveL to home position
@@ -190,7 +190,7 @@ def ImuBoxTask():
     boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
     goToImuTable(rtde_c)
     findImuBox(rtde_c, rtde_r, gripperImuBox)
-    #goToImuTable(rtde_c)
+    goHome(state="imu")
     placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen)
     
 
