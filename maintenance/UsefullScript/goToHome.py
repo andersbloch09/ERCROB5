@@ -42,9 +42,9 @@ rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
 
 goHome()
 
-pose1 = [0.34, 0.34, 0.285, np.deg2rad(-86.7), np.deg2rad(23.2), np.deg2rad(-23.6)]
+pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
 
-pose2 = [0, 0, 0, 0, 0, 0]
+pose2 = [0, 0, 0, 0, 0, np.radians(90)]
 poseFound = rtde_c.poseTrans(pose1, pose2)
 
 poseFound.extend([velocity, acceleration, blend])

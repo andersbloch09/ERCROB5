@@ -107,6 +107,23 @@ def findImuBox(rtde_c, rtde_r, gripperImuBox):
     z_distance = moveToBoxOrientation(z_rot, boxHomeGlobalRef, rtde_c, boxFitLoc, rtde_r)
     boxPickUp(gripperImuBox, rtde_r, rtde_c, z_distance)
 
+def eulerToAngleAxis(roll, pitch, yaw):
+    roll, pitch, yaw = np.radians([roll, pitch, yaw])
+
+    # Create a rotation object from Euler angles
+    rotation = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False)
+
+    #[0.04332941451623777, 0.26972485684182845, 0.4372680928231839, -162.14515612312013, 74.91373118143068, -3.6912042291428007]
+
+    # Convert to axis-angle representation
+    axis_angle = rotation.as_rotvec()
+
+    # Extract axis and angle components
+    axis = axis_angle[:3]
+    angle = axis_angle[:3]
+
+    return angle[2]
+
 def scanImuBoardLoc(rtde_c, rtde_r): 
     velocity = 0.9
     acceleration = 0.9
@@ -126,9 +143,11 @@ def scanImuBoardLoc(rtde_c, rtde_r):
 
     boardPoseRef = rtde_r.getActualTCPPose() 
 
+    roll, pitch, yaw = -86.7, 23.2, -23.6
 
     # these angles should be changes
-    boardPoseRef = [boardPoseRef[0], boardPoseRef[1], boardPoseRef[2], np.deg2rad(-86.7), np.deg2rad(23.2), np.deg2rad(-23.6)]
+
+    boardPoseRef = [boardPoseRef[0], boardPoseRef[1], boardPoseRef[2], np.deg2rad(roll), np.deg2rad(pitch), np.deg2rad(yaw)]
 
     # The 0.07 is to keep a wanted distance to the board so the box does not hit is
 
@@ -136,7 +155,7 @@ def scanImuBoardLoc(rtde_c, rtde_r):
 
     return boardPoseRef, boardPose
 
-def placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen):
+def placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle):
     velocity = 0.2
     acceleration = 0.2
     blend = 0.0
@@ -145,22 +164,17 @@ def placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen):
 
     boardScan = rtde_c.getInverseKinematics(boardPoseTrans)
     
+    rtde_c.moveJ(boardScan, velocity, acceleration)
     #boardScan = [2.127626895904541, -1.622178693810934, -1.3549747467041016, 3.5395304399677734, -0.5716679731952112, -9.864086278269085]
 
-    rtde_c.moveJ(boardScan, velocity, acceleration)
-
-    velocity = 0.5
-    acceleration = 0.5
-    blend = 0.0
-
-    boardPose[2] = boardPose[2] - 0.07
-    boardPose[5] = imuAngle
+    boardPose[5] = np.radians(imuAngle)
 
     boxPosRef = rtde_c.poseTrans(boardPoseRef, boardPose)
 
     rtde_c.moveL(boxPosRef, velocity, acceleration, blend)
 
-    boardPose[2] = boardPose[2] + 0.09
+
+    boardPose[2] = boardPose[2] + 0.085
 
     boxPosRef = rtde_c.poseTrans(boardPoseRef, boardPose)
 

@@ -19,7 +19,7 @@ gripperSecretLid = "secretLid"
 
 buttonList = []
 
-buttonString = "562"
+buttonString = "713"
 
 imuAngle = -45
 
@@ -191,7 +191,7 @@ def ImuBoxTask():
     goToImuTable(rtde_c)
     findImuBox(rtde_c, rtde_r, gripperImuBox)
     goHome(state="imu")
-    placeImu(imuAngle, boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen)
+    placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
     
 
 def main():
@@ -211,15 +211,15 @@ def main():
 
     pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
 
-    #xLenth, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
+    xLenth, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
 
-    #gridRun(pose1, velocity, acceleration, blend_1, xLenth, yLength)
+    gridRun(pose1, velocity, acceleration, blend_1, xLenth, yLength)
 
-    #goHome()
+    goHome()
 
-    #clickButton(pose1, velocity, acceleration, blend_1)
+    clickButton(pose1, velocity, acceleration, blend_1)
 
-    #goHome()
+    goHome()
 
     ImuBoxTask()
 
