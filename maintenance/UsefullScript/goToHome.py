@@ -40,11 +40,11 @@ rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
 # Add wanted payload
 #rtde_c.setPayload(3.0, [0,0,0.22])
 
-goHome()
+#goHome()
 
-pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+pose1 = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
 
-pose2 = [0, 0, 0, 0, 0, np.radians(90)]
+pose2 = [0, 0, 0, 0, 0, 0]
 poseFound = rtde_c.poseTrans(pose1, pose2)
 
 poseFound.extend([velocity, acceleration, blend])

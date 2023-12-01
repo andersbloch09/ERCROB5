@@ -194,18 +194,10 @@ def ImuBoxTask():
     placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
     
 
-def main():
+def boardTask():
     velocity = 0.33
     acceleration = 0.33
     blend_1 = 0.0
-
-    offset = rtde_c.getTCPOffset()
-
-    print(offset)
-
-    rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
-    # Add wanted payload
-    #rtde_c.setPayload(3.0, [0,0,0.22])
 
     goHome()
 
@@ -219,9 +211,23 @@ def main():
 
     clickButton(pose1, velocity, acceleration, blend_1)
 
-    goHome()
+def secretBoxTask():
+    tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
 
-    ImuBoxTask()
+def main():
+    rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
+    # Add wanted payload
+    #rtde_c.setPayload(3.0, [0,0,0.22])
+    
+    #boardTask()
+
+    #goHome()
+
+    #ImuBoxTask()
+
+    #goHome()
+
+    secretBoxTask()
 
     goHome()
 

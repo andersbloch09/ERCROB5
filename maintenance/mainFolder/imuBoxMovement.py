@@ -39,7 +39,6 @@ def moveToBoxOrientation(z_rot, boxHomeGlobalRef, rtde_c, boxFitLoc, rtde_r):
     velocity = 1
     acceleration = 1
     blend = 0
-    # Orientate
 
     zOri = [0, 0, 0, 0, 0, np.radians(z_rot)]
     
@@ -56,12 +55,6 @@ def moveToBoxOrientation(z_rot, boxHomeGlobalRef, rtde_c, boxFitLoc, rtde_r):
     boxPos = [boxFitLoc[0], boxFitLoc[1], 0, 0, 0, np.radians(90)]
 
     tcp_pose = rtde_r.getActualTCPPose() 
-
-    #tcp_pose = rad2deg(tcp_pose)
-
-    print(tcp_pose)
-
-    zero = [0,0,0,0,0,0]
 
     boxPosRef = rtde_c.poseTrans(tcp_pose, boxPos)
 
