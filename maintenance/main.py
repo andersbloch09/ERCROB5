@@ -6,7 +6,7 @@ from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
 from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
-from mainFolder.secretBoxMovement import scanTable
+from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid
 
 IP = "192.168.1.102"
 
@@ -22,7 +22,7 @@ buttonList = []
 
 buttonString = "713"
 
-imuAngle = -45
+imuAngle = 90
 
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
@@ -216,9 +216,10 @@ def boardTask():
 
 def secretBoxTask():
     talbeFitLoc = scanTable(rtde_c, rtde_r)
-
     
-    tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
+    #tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
+    boxLoc = lidLocation(rtde_c, rtde_r)
+    pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid)
 
 
 def main():
@@ -232,7 +233,7 @@ def main():
 
     #ImuBoxTask()
 
-    goHome()
+    #goHome()
 
     secretBoxTask()
 

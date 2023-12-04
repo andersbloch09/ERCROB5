@@ -28,4 +28,5 @@ def gripperControl(state = "open"):
         print(f"Failed to connect to {args.usb_port}: {e}")
     
     time.sleep(2)
-gripperControl(state="secretLid")
+
+gripperControl(state="open")

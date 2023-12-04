@@ -42,7 +42,9 @@ rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
 
 #goHome()
 
-pose1 = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
+roll, pitch, yaw = -79.11510627, 48.48179948, -49.33543757
+
+pose1 = [0.44369501072561013, 0.09707740459758275, 0.15540484236620697, np.deg2rad(roll), np.deg2rad(pitch), np.deg2rad(yaw)]
 
 pose2 = [0, 0, 0, 0, 0, 0]
 poseFound = rtde_c.poseTrans(pose1, pose2)

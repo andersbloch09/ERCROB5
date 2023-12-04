@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 # Your Euler angles (in radians)
-roll, pitch, yaw = np.radians([-90, 0, -45])
+roll, pitch, yaw = np.radians([-89, 0, -63])
 
 # Create a rotation object from Euler angles
 rotation = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False)

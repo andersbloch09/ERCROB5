@@ -45,7 +45,7 @@ def arucoToBoardImu(x_initial, y_initial, z_initial):
 
     return boardCenterImu
 
-def lidTalbeLoc(x_initial, y_initial, z_initial):
+def lidTableLoc(x_initial, y_initial, z_initial):
     translationVectorNewFrame = np.array([0, -0.01, -0.17])
     tableCenter = np.array([0.07, 0.085, 0])
 
@@ -54,3 +54,13 @@ def lidTalbeLoc(x_initial, y_initial, z_initial):
     print("lidPlacement", lidPlacement)
 
     return lidPlacement
+
+def lidBoxLoc(x_initial, y_initial, z_initial):
+    translationVectorNewFrame = np.array([0, -0.01, -0.17])
+    lidCenter = np.array([0.0, -0.08, 0.08])
+
+    lidBoxLocation =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + lidCenter
+
+    print("lid location", lidBoxLocation)
+
+    return lidBoxLocation
