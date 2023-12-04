@@ -19,7 +19,7 @@ def gripperControl(state = "open"):
         if state == "imu":
             angleset = 115
         if state == "secretLid":
-            angleset = 95
+            angleset = 90
     
         angle = int(angleset)
         if 60 <= angle <= 180:

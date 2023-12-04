@@ -57,7 +57,7 @@ def lidTableLoc(x_initial, y_initial, z_initial):
 
 def lidBoxLoc(x_initial, y_initial, z_initial):
     translationVectorNewFrame = np.array([0, -0.01, -0.17])
-    lidCenter = np.array([0.0, -0.08, 0.08])
+    lidCenter = np.array([0.0, -0.075, 0.055])
 
     lidBoxLocation =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame + lidCenter
 

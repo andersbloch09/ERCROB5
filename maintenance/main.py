@@ -6,7 +6,7 @@ from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
 from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
-from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid
+from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid, scanSecretAruco, returnLid
 
 IP = "192.168.1.102"
 
@@ -20,9 +20,9 @@ gripperSecretLid = "secretLid"
 
 buttonList = []
 
-buttonString = "713"
+buttonString = "7135"
 
-imuAngle = 90
+imuAngle = 45
 
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
@@ -117,8 +117,8 @@ def goHome(state=gripperOpen):
 
 def clickButton(pose1, velocity, acceleration, blend, bString):
     gripperControl(gripperClosed)
-    buttonDepth = 0.009
-
+    buttonDepth = 0.01
+    print("StringForClicks   ", bString)
     for j in range(len(bString)):
         currentTarget = bString[j]
         currentTarget = int(currentTarget)
@@ -196,48 +196,54 @@ def ImuBoxTask():
     placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
     
 
-def boardTask():
+def boardTask(pose1):
     velocity = 0.33
     acceleration = 0.33
     blend_1 = 0.0
 
     goHome()
 
-    pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+    xLength, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
 
-    xLenth, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
-
-    gridRun(pose1, velocity, acceleration, blend_1, xLenth, yLength)
+    gridRun(pose1, velocity, acceleration, blend_1, xLength, yLength)
 
     goHome()
 
     clickButton(pose1, velocity, acceleration, blend_1, buttonString)
 
 
-def secretBoxTask():
-    talbeFitLoc = scanTable(rtde_c, rtde_r)
-    
+def secretBoxTask(pose1):
+    tableFitLoc = scanTable(rtde_c, rtde_r)
     #tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
     boxLoc = lidLocation(rtde_c, rtde_r)
-    pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid)
+    leaveLid, returnJoints, boxPosRefReturn = pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid, tableFitLoc, gripperOpen)
+    secretId = scanSecretAruco(rtde_c, rtde_r)
+    returnLid(rtde_c, rtde_r, leaveLid, gripperSecretLid, returnJoints, boxPosRefReturn, gripperOpen)
+    goHome()
+    velocity = 0.33
+    acceleration = 0.33
+    blend = 0
+    rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
+    secretId = str(secretId)
 
+    clickButton(pose1, velocity, acceleration, blend, secretId)
 
 def main():
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
     # Add wanted payload
     #rtde_c.setPayload(3.0, [0,0,0.22])
-    
-    #boardTask()
+    pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+    boardTask(pose1)
 
-    #goHome()
+    goHome()
 
-    #ImuBoxTask()
+    ImuBoxTask()
 
-    #goHome()
+    goHome()
 
-    secretBoxTask()
+    secretBoxTask(pose1)
 
-    #goHome()
+    goHome()
 
 
 if __name__ == "__main__":
