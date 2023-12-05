@@ -1,6 +1,28 @@
 import cv2
 import numpy as np
 import time
+import csv
+
+def append_to_csv(file_path, data1, data2, data3):
+    """
+    Appends three data types to a CSV file.
+
+    Parameters:
+    - file_path (str): The path to the CSV file.
+    - data1: The first data to be appended.
+    - data2: The second data to be appended.
+    - data3: The third data to be appended.
+    """
+
+    # Open the CSV file in append mode
+    with open(file_path, 'a', newline='') as arucoFiles:
+        # Create a CSV writer object
+        csv_writer = csv.writer(arucoFiles)
+
+        # Write the data to the CSV file
+        csv_writer.writerow([data1, data2, data3])
+
+
 
 def findArucoLocation():
     # Load camera calibration parameters
@@ -66,7 +88,9 @@ def findArucoLocation():
                 cv2.drawFrameAxes(frame, mtx, dist, rvec[0], tvec[0], 0.1)
 
                 if tvec.any():
+                    append_to_csv("/home/rob5564/Desktop/ERCROB5IMU/arucoDetectionTest/arucoData4", tvec, rvec, ids[0][0])
                     return x_distance, y_distance, z_distance, ids
+
         else: 
             x_distance, y_distance, z_distance, ids = 0, 0, 0, ""
             return x_distance, y_distance, z_distance, ids

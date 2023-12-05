@@ -193,7 +193,7 @@ def ImuBoxTask():
     goToImuTable(rtde_c)
     findImuBox(rtde_c, rtde_r, gripperImuBox)
     goHome(state="imu")
-    placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
+    #placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
     
 
 def boardTask(pose1):
@@ -209,24 +209,24 @@ def boardTask(pose1):
 
     goHome()
 
-    clickButton(pose1, velocity, acceleration, blend_1, buttonString)
+    #clickButton(pose1, velocity, acceleration, blend_1, buttonString)
 
 
 def secretBoxTask(pose1):
     tableFitLoc = scanTable(rtde_c, rtde_r)
     #tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
     boxLoc = lidLocation(rtde_c, rtde_r)
-    leaveLid, returnJoints, boxPosRefReturn = pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid, tableFitLoc, gripperOpen)
-    secretId = scanSecretAruco(rtde_c, rtde_r)
-    returnLid(rtde_c, rtde_r, leaveLid, gripperSecretLid, returnJoints, boxPosRefReturn, gripperOpen)
+    #leaveLid, returnJoints, boxPosRefReturn = pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid, tableFitLoc, gripperOpen)
+    #secretId = scanSecretAruco(rtde_c, rtde_r)
+    #returnLid(rtde_c, rtde_r, leaveLid, gripperSecretLid, returnJoints, boxPosRefReturn, gripperOpen)
     goHome()
     velocity = 0.33
     acceleration = 0.33
     blend = 0
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
-    secretId = str(secretId)
+    #secretId = str(secretId)
 
-    clickButton(pose1, velocity, acceleration, blend, secretId)
+    #clickButton(pose1, velocity, acceleration, blend, secretId)
 
 def main():
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
