@@ -217,27 +217,27 @@ def secretBoxTask(pose1):
     #tableRefPose = [0.24614925086572445, 0.07873735284995985, 0.13874065786540948, np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
     boxLoc = lidLocation(rtde_c, rtde_r)
     leaveLid, returnJoints, boxPosRefReturn = pickUpLid(rtde_c, rtde_r, boxLoc, gripperSecretLid, tableFitLoc, gripperOpen)
-    secretId = scanSecretAruco(rtde_c, rtde_r)
+    #secretId = scanSecretAruco(rtde_c, rtde_r)
     returnLid(rtde_c, rtde_r, leaveLid, gripperSecretLid, returnJoints, boxPosRefReturn, gripperOpen)
     goHome()
     velocity = 0.33
     acceleration = 0.33
     blend = 0
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
-    secretId = str(secretId)
+    #secretId = str(secretId)
 
-    clickButton(pose1, velocity, acceleration, blend, secretId)
+    #clickButton(pose1, velocity, acceleration, blend, secretId)
 
 def main():
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
     # Add wanted payload
     #rtde_c.setPayload(3.0, [0,0,0.22])
     pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
-    boardTask(pose1)
+    #boardTask(pose1)
 
-    goHome()
+    #goHome()
 
-    ImuBoxTask()
+    #ImuBoxTask()
 
     goHome()
 
