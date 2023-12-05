@@ -1,0 +1,36 @@
+# Custom docker image for Rob5
+# Use the official ROS Noetic base image
+FROM ros:noetic
+
+# Set the working directory
+WORKDIR /catkin_ws
+
+# Install dependencies and other necessary tools
+RUN apt-get update && \
+    apt-get install -y \
+        python3-pip \
+        python3-setuptools \
+        python3-dev \
+        libopencv-dev\
+        ros-$(rosversion -d)-cv-bridge\
+        ros-$ROS_DISTRO-realsense2-camera &&\
+        rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install numpy \
+    && pip3 install opencv-contrib-python
+
+RUN mkdir -p src
+
+# Basic tools 
+RUN apt-get update && \
+    apt-get install vim nano git tmux wget curl net-tools iputils-ping -y
+
+# Build the ROS package
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
+    catkin_make"
+
+# Source the ROS setup file
+RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
+
+# Define the default command to run when the container starts
+CMD ["bash"]
