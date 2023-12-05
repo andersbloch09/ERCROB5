@@ -8,29 +8,36 @@ from mainFolder.gripperControl import gripperControl
 from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
 from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid, scanSecretAruco, returnLid
 
+# Ip of the robot 
 IP = "192.168.1.102"
 
+# This connects the controllers and creates the usable variable
 rtde_c = rtde_control.RTDEControlInterface(IP)
 rtde_r = rtde_receive.RTDEReceiveInterface(IP)
 
+# Different gripper states 
 gripperOpen = "open"
 gripperClosed = "close"
 gripperImuBox = "imu"
 gripperSecretLid = "secretLid"
 
+# List for button objects on the button board
 buttonList = []
 
+# Input string for competition
 buttonString = "7135"
 
+# Input angle 
 imuAngle = 45
 
+# Button class for the button board
 class buttonObject():
     def __init__(self, id, loc, boardNumber):
         self.id = id
         self.loc = loc
         self.boardNumber = boardNumber
 
-
+# This function creates the grid lengths to make a grid run afterwards finding the arucos
 def getGridLength(pose1, velocity, acceleration, blend):
     gridButtons = []
     y = -0.04
@@ -101,16 +108,6 @@ def goHome(state=gripperOpen):
 
     gripperControl(state)
     homeJoints = [1.6631979942321777, -1.1095922750285645, -2.049259662628174, 3.189222975368164, -0.6959036032306116, -9.445799001047405]
-
-    # This i for moveL to home position
-    #pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
-    #pose2 = [0, 0, 0, 0, 0, 0]
-
-    #pose3 = rtde_c.poseTrans(pose1, pose2)
-
-    #pose3.extend([velocity, acceleration, blend_1])
-
-    #path = [pose3]
 
     rtde_c.moveJ(homeJoints, velocity, acceleration, blend_1)
 
@@ -229,10 +226,13 @@ def secretBoxTask(pose1):
     clickButton(pose1, velocity, acceleration, blend, secretId)
 
 def main():
+    # Offset made for the gripper fully closed
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
-    # Add wanted payload
-    #rtde_c.setPayload(3.0, [0,0,0.22])
+
+    # This is the cartesian point for the home position 
+    # Used to move relative to the frame made there
     pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+
     boardTask(pose1)
 
     goHome()
