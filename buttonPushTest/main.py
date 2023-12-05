@@ -20,7 +20,7 @@ gripperSecretLid = "secretLid"
 
 buttonList = []
 
-buttonString = "7135"
+buttonString = "9876"
 
 imuAngle = 45
 
@@ -237,13 +237,13 @@ def main():
 
     goHome()
 
-    ImuBoxTask()
+    #ImuBoxTask()
 
-    goHome()
+    #goHome()
 
-    secretBoxTask(pose1)
+    #secretBoxTask(pose1)
 
-    goHome()
+    #goHome()
 
 
 if __name__ == "__main__":
