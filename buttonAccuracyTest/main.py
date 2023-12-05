@@ -7,6 +7,7 @@ from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
 from mainFolder.imuBoxMovement import goToImuTable, findImuBox, scanImuBoardLoc, placeImu
 from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid, scanSecretAruco, returnLid
+import time
 
 IP = "192.168.1.102"
 
@@ -20,7 +21,7 @@ gripperSecretLid = "secretLid"
 
 buttonList = []
 
-buttonString = "7135"
+buttonString = "123456789"
 
 imuAngle = 45
 
@@ -138,9 +139,11 @@ def clickButton(pose1, velocity, acceleration, blend, bString):
 
                 buttonLocBack.extend([velocity, acceleration, blend])
 
-                path = [buttonLocBack, buttonLocPush, buttonLocBack]
+                path = [buttonLocBack]
                 
-                rtde_c.moveL(path)
+                rtde_c.moveL(path)  
+                
+                time.sleep(10)
 
 
 def deg2rad(list):
@@ -237,13 +240,13 @@ def main():
 
     goHome()
 
-    ImuBoxTask()
+    #ImuBoxTask()
 
-    goHome()
+    #goHome()
 
-    secretBoxTask(pose1)
+    #secretBoxTask(pose1)
 
-    goHome()
+    #goHome()
 
 
 if __name__ == "__main__":
