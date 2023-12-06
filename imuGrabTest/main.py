@@ -189,11 +189,11 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
 
 
 def ImuBoxTask(): 
-    boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
+    #boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
     goToImuTable(rtde_c)
     findImuBox(rtde_c, rtde_r, gripperImuBox)
-    goHome(state="imu")
-    placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
+    #goHome(state="imu")
+    #placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
     
 
 def boardTask(pose1):
@@ -232,18 +232,18 @@ def main():
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
     # Add wanted payload
     #rtde_c.setPayload(3.0, [0,0,0.22])
-    pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
-    boardTask(pose1)
+    #pose1 = [0.34, 0.34, 0.285, np.deg2rad(-84), np.deg2rad(35), np.deg2rad(-35)]
+    #boardTask(pose1)
 
     goHome()
 
     ImuBoxTask()
 
-    goHome()
+    #goHome()
 
-    secretBoxTask(pose1)
+    #secretBoxTask(pose1)
 
-    goHome()
+    #goHome()
 
 
 if __name__ == "__main__":
