@@ -3,7 +3,7 @@ import numpy as np
 def buttonLocation(currentRobotLocation, x_initial, y_initial, z_initial):
     # Initial point in the camera frame
     # Translation to a new frame
-    translationVectorNewFrame = np.array([0, -0.01, -0.17])
+    translationVectorNewFrame = np.array([0.0, -0.01, -0.17])
 
     arucoToButton = np.array([0, 0.06, -0.03])
 
@@ -27,7 +27,7 @@ def imuBoxLocationPickup(z_initial):
     return point_final_new_frame
 
 def imuBoxLocationFit(x_initial, y_initial, z_initial):
-    translationVectorNewFrame = np.array([0, 0.01, -0.17])
+    translationVectorNewFrame = np.array([0, 0.02, -0.17])
 
     boxFitLoc =  np.array([x_initial, y_initial, z_initial]) + translationVectorNewFrame
 

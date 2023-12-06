@@ -27,10 +27,10 @@ gripperSecretLid = "secretLid"
 buttonList = []
 
 # Input string for competition
-buttonString = "7135"
+buttonString = "3976"
 
 # Input angle
-imuAngle = 45
+imuAngle = 53
 
 
 # Button class for the button board

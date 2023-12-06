@@ -89,7 +89,7 @@ def boxPickUp(gripperImuBox, rtde_r, rtde_c, z_distance):
 
 def findImuBox(rtde_c, rtde_r, gripperImuBox):
     boxFitLoc = []
-    boxHomeGlobalRef = [0.0463559417774228, 0.24843588058249952, 0.17441032897587316, 
+    boxHomeGlobalRef = [0.045684449689085624, 0.27738803183668964, 0.2018407491051502, 
               np.radians(-165.44384144), np.radians(68.5), np.radians(-0.59804425)]
     z_rot = None
     while z_rot is None:
