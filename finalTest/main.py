@@ -41,8 +41,6 @@ class buttonObject():
         self.boardNumber = boardNumber
 
 
-# This function creates the grid lengths
-# to make a grid run afterwards finding the arucos
 def getGridLength(pose1, velocity, acceleration, blend):
     gridButtons = []
     y = -0.04
@@ -194,10 +192,16 @@ def gridRun(pose1, velocity, acceleration, blend, xLenth, yLength):
 
 
 def ImuBoxTask():
+    # scanImuBoardLoc scans the imu board to find the location to put the imu
+    # before picking it up
     boardPoseRef, boardPose = scanImuBoardLoc(rtde_c, rtde_r)
+    # Joint states to rotate to a position where the imu can be scanned
     goToImuTable(rtde_c)
+    # finds the imu box and rotates the robot to fit and pick up the imu
     findImuBox(rtde_c, rtde_r, gripperImuBox)
+    # keeps the state as imu to not drop it
     goHome(state="imu")
+    # The imu is placed and the robot will return to home after
     placeImu(boardPoseRef, boardPose, rtde_c, rtde_r, gripperOpen, imuAngle)
 
 
@@ -207,26 +211,36 @@ def boardTask(pose1):
     blend_1 = 0.0
 
     goHome()
-
+    # This function creates the grid lengths
+    # to make a grid run afterwards finding the arucos
     xLength, yLength = getGridLength(pose1, velocity, acceleration, blend_1)
 
+    # gridRun runs through a 3x3 grid bassed on the lengths found
+    # in the function above
     gridRun(pose1, velocity, acceleration, blend_1, xLength, yLength)
 
     goHome()
 
+    # This function clicks the buttons given in the competition string
     clickButton(pose1, velocity, acceleration, blend_1, buttonString)
 
 
 def secretBoxTask(pose1):
+    # This function scans the table first to know where to put the lid
     tableFitLoc = scanTable(rtde_c, rtde_r)
-    # tableRefPose =
-    # [0.24614925086572445, 0.07873735284995985, 0.13874065786540948,
-    # np.deg2rad(-165.44384144), np.deg2rad(68.5), np.deg2rad(-0.59804425)]
+
+    # This function scans the secret box and returns the location of the lid
+    # based on a translation
     boxLoc = lidLocation(rtde_c, rtde_r)
+
+    # Here the location is used to pick up the lid and place it on the aruco
     leaveLid, returnJoints, boxPosRefReturn = pickUpLid(
         rtde_c, rtde_r, boxLoc, gripperSecretLid, tableFitLoc, gripperOpen)
 
+    # The secret ID is scanned and returned in this function
     secretId = scanSecretAruco(rtde_c, rtde_r)
+
+    # The lid is put back on
     returnLid(rtde_c, rtde_r, leaveLid, gripperSecretLid,
               returnJoints, boxPosRefReturn, gripperOpen)
 
@@ -237,7 +251,7 @@ def secretBoxTask(pose1):
     blend = 0
     rtde_c.setTcp([0, 0, 0.22, 0, 0, 0])
     secretId = str(secretId)
-
+    # The button with the secret ID is pressed on the board
     clickButton(pose1, velocity, acceleration, blend, secretId)
 
 
