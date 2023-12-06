@@ -5,10 +5,10 @@ import numpy as np
 from mainFolder.CameraOffset import buttonLocation
 from mainFolder.ArucoEstimation import findArucoLocation
 from mainFolder.gripperControl import gripperControl
-from mainFolder.imuBoxMovement import (goToImuTable, findImuBox,
-                                       scanImuBoardLoc, placeImu)
-from mainFolder.secretBoxMovement import (scanTable, lidLocation, pickUpLid,
-                                          scanSecretAruco, returnLid)
+from mainFolder.imuBoxMovement import goToImuTable, findImuBox, \
+                                       scanImuBoardLoc, placeImu
+from mainFolder.secretBoxMovement import scanTable, lidLocation, pickUpLid, \
+                                          scanSecretAruco, returnLid
 
 # Ip of the robot
 IP = "192.168.1.102"
