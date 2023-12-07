@@ -14,7 +14,7 @@ docker build -t $image_name $directory
 
 docker run \
     -it \
-    -v /home/exomy/ExoMy_Software/Melodic:/catkin_ws/src \
+    -v /home/exomy/ExoMy_Software/Noetic:/catkin_ws/src \
     -v "/dev:/dev" \
     --privileged \
     --network "${network_name}" \
