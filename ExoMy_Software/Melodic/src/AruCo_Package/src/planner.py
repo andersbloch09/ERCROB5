@@ -37,7 +37,7 @@ class Handler:
         # Initialize publisher
         self.rover_command_pub = rospy.Publisher("/rover_command", RoverCommand, queue_size=10)
 
-    def driver_callback(self,balls):
+    def driver_callback(self,temp):
         self.Initiate()
 
     def aruco_callback(self, msg):
