@@ -1,9 +1,9 @@
-container_name="ros_melodic"
-image_name="melodic_image"
+container_name="ros_noetic"
+image_name="noetic_image"
 network_name="ros_network"
 
 # Stop any of the 3 containers if running
-RUNNING_CONTAINERS=$( docker container ls -a -q --filter ancestor=melodic_image )
+RUNNING_CONTAINERS=$( docker container ls -a -q --filter ancestor=noetic_image )
 if [ -n "$RUNNING_CONTAINERS" ]; then
     docker rm -f "$RUNNING_CONTAINERS"
 fi
