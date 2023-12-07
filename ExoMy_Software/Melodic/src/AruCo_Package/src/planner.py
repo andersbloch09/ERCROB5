@@ -66,17 +66,19 @@ class Handler:
         transformed_translation[1] = round(transformed_translation[1],2)
         transformed_translation.append(round(confidence,2))
 
+        # Ensure that only relevant Aruco ID's are stored:
         if 11 > msg.id > 0:
             if msg.id not in self.marker_data:
                 self.marker_data[msg.id] = transformed_translation
-            
+            # Replace old positional data for marker, if confidence is higher
             elif confidence > self.marker_data[msg.id][2]:
                 self.marker_data[msg.id] = transformed_translation
                 print("Higher Confidence Level Found!")
 
-        print(self.marker_data)
+        #print(self.marker_data)
         
     def odom_callback(self, data):
+        # Callback function that stores odometry data from T265 as appropriate local values
         self.x = round(data.pose.pose.position.x,2)
         self.y = round(data.pose.pose.position.y,2)
         self.z = round(data.pose.pose.position.z,2)
@@ -98,59 +100,71 @@ class Handler:
         self.yaw = degrees(self.euler_angles[2])
        
     def Initiate(self):
+        # Function that performs all path planning and execution
         print(f"Stats: {self.visit_order} and {self.current_goal}")
+        # Ensure that the visit_order list still contains goals and that the rover has no current goal
         if self.visit_order and not self.current_goal:
             print("Looking for target")
+            # If a goal has just been reached, pop next goal in the visit order list
             if self.goal_reached:
                 print("Popping Next Goal")
                 print(self.marker_data)
                 self.next_goal = self.visit_order.pop(0)
                 self.goal_reached = False
-
+            # If rover has a new goal, it exists in the Marker_data dictionary and no path has been generated yet: Generate path
             if self.next_goal in self.marker_data and not self.refined_path:
                 print("Generating Path")
                 self.current_goal = self.marker_data[self.next_goal]
                 self.other_markers = self.marker_data
                 self.other_markers.pop(self.next_goal)
                 self.refined_path = generate_path((self.x, self.y), self.current_goal, self.other_markers)
-            
+            # If rover has a new goal, but it doesn't exist in the marker_data dictionary, perform "Searching" maneuvre
             elif self.next_goal not in self.marker_data:
                 self.searching()
             else:
                 print("Initiation Error")
-
+        # If there are no more goals left in Visit_order, and the final goal has been reached, perform "returnHome" maneuvre
         elif not self.visit_order and self.goal_reached:
+            #If rover is not home yet
             if not self.HOME:   
                 self.returnHome()
-            
-        if self.current_goal:
+                
+        # If the rover has a current goal, and the path has been generated, begin movement
+        if self.current_goal and self.refined_path:
             print(f"Current Goal: {self.current_goal}")
             self.move_to_next_point()
     
     def returnHome(self):
         # Generate Path Home
         print("Returning Home")
+        # Generate path home only once
         if not self.homePathGenerated:
             self.refined_path = generate_path((self.x, self.y), (0,0), self.marker_data)
             self.homePathGenerated = True
         self.move_to_next_point()
-        # Determine whether goal has been reached
+        # Determine whether the goal has been reached with a tolerance of 10cm
         if distance((self.x,self.y),(0,0)) < 0.1:
                 self.publish_movement(0,0,2)
                 self.HOME = True
 
     def move_to_next_point(self):
         #print(self.refined_path)
-        if self.refined_path:
-            current_point = self.refined_path[0]
-            distance_to_current = distance((self.x,self.y), current_point)
-            if distance_to_current < self.lookAhead:  # Assuming a threshold for reaching the point
-                self.refined_path.pop(0)
-                if not self.refined_path:
-                    self.current_goal = None
-                    self.goal_reached = True
-                    
-            goto(current_point[0],current_point[1])
+        # First goal-point in our "pure pursuit" is set, and the distance to it is checked
+        current_point = self.refined_path[0]
+        distance_to_current = distance((self.x,self.y), current_point)
+        if distance_to_current < self.lookAhead:  # Assuming a threshold for reaching the point
+            # Remove point if it is too close
+            self.refined_path.pop(0)
+            # If path is "completed", set current goal and goal reached, so that self.initate() plans path to next point
+            if not self.refined_path:
+                self.current_goal = None
+                self.goal_reached = True
+            # Else set the new goal
+            else:
+                current_point = self.refined_path[0]
+        
+        # Go to current point
+        goto(current_point[0],current_point[1])
 
     def rotate_x(self, angle):
         # Rotation matrix around the x-axis
@@ -191,9 +205,7 @@ class Handler:
         return Vector3(*transformed_coords)
         
     def publish_movement(self, velocity, angle, mode):
-        # 100 > angle > 80 for forward
-        # 80 > angle > 0 for left
-        # 180 > angle > 100 for right
+        # Publish movement commands for the rover:
         command = RoverCommand()
         command.steering = angle
         command.locomotion_mode = mode
@@ -204,6 +216,7 @@ class Handler:
         self.rover_command_pub.publish(command)
 
     def searching(self):
+        # Searching maneuvre is incremental turning
         self.publish_movement(1,180,2)
         sleep(0.1)
         self.publish_movement(0,180,2)
@@ -281,11 +294,14 @@ def distance(point1, point2):
 
 def generate_path(start, goal, danger_landmarks):
     landmark = danger_landmarks
+    # Check whether the new neighboring point is valid. E.g. does it avoid landmarks
     def is_valid(point): 
         return 0 <= point[0] <= 10 and 0 <= point[1] <= 10 and all(distance(point, d) >= coordinate_handler.avoidanceDist for d in landmark.values())
 
+    # Generate new neighbors in pathfinding
     def get_neighbors(point):
         neighbors = []
+        # 0.1 increments in all directions
         for dx in [-.1, 0, .1]:
             for dy in [-.1, 0, .1]:
                 if dx == 0 and dy == 0:
@@ -294,30 +310,38 @@ def generate_path(start, goal, danger_landmarks):
                 if is_valid(neighbor):
                     neighbors.append(neighbor)
         return neighbors
-
+    # Round start and goal positions to 2 decimal places (1cm accuracy)
+    # Also ensure that coordinates are always positive (Definitely a total hack)
+    # Can and should be fixed by using other frames to represent location
     start = (round(start[0], 2)+5, round(start[1]+5, 2))
     goal = (round(goal[0], 2)+5, round(goal[1]+5, 2))
     print(f"Generating path from: {start} to {goal}")
 
+    # Check whether start and goal pose are coincident
     if start == goal:
         return [start]
 
+    # Make A-star variables
     frontier = [(0, start)]
     came_from = {start: None}
     cost_so_far = {start: 0}
-
+    
     while frontier:
         current_cost, current_node = heappop(frontier)
         dist_to_goal = distance(current_node, goal)
+        # Tolerance for successful path found is 10 cm
         if dist_to_goal < 0.1:
             path = []
             while current_node:
                 path.append(current_node)
                 current_node = came_from[current_node]
+                # Remove the +5 increment to each coordinate from earlier (Not ideal)
             return [(element[0]-5,element[1]-5) for element in path[::-1]]
 
+        # A-star implementation
         for next_node in get_neighbors(current_node):
             new_cost = cost_so_far[current_node] + distance(current_node, next_node)
+            # Ensure no backtracking and that the new path "costs" less than others
             if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
                 cost_so_far[next_node] = new_cost
                 priority = new_cost + distance(next_node, goal)
