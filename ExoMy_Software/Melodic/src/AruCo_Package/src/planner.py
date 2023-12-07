@@ -18,7 +18,7 @@ class Handler:
     def __init__(self):
         rospy.init_node('handler_node', anonymous=True)
         self.marker_data = {-1 : (100,100)}  # Dictionary to hold ID-Translation pairs
-        self.other_markers = {-1 : (100,100)}
+        self.other_markers = {-1 : (100,100)} # Dictionary to hold all ID-translation pairs, except the current goal
         self.visit_order = [2,1,3,6,6]  # Example visit order
         self.current_goal = None
         self.path = None
@@ -27,8 +27,9 @@ class Handler:
         self.next_goal = None
         self.HOME = False
         self.homePathGenerated = False
-        self.lookAhead = 0.1
-        self.avoidanceDist = 0.7
+        self.lookAhead = 0.1 # Look Ahead distance for Pure Pursuit
+        self.avoidanceDist = 0.7 # Avoidance distance for pathplanning
+        
         # Initialize the subscribers
         self.aruco_sub = rospy.Subscriber('/aruco_data', ArucoData, self.aruco_callback)
         self.odom_sub = rospy.Subscriber('/t265/odom/sample', Odometry, self.odom_callback)
@@ -38,16 +39,19 @@ class Handler:
         self.rover_command_pub = rospy.Publisher("/rover_command", RoverCommand, queue_size=10)
 
     def driver_callback(self,temp):
+        # Independent callback function that uses the refresh rate of the /t265/accel/sample topic to execute relevant code without hindering
+        # the update of odometry- and arucodata. (Kind of a hack)
         self.Initiate()
 
     def aruco_callback(self, msg):
         # Apply coordinate transformation to incoming ArucoData- This is now in the local frame
+        # This conversion ensures the coincidence of the representing frames for the Aruco-detector and odometry data.
         transformed_translation = self.transform_coordinates(msg.translation)
 
         # Convert to global frame:
         transformed_translation = transform_to_global_frame(transformed_translation.x,transformed_translation.y,self.x, self.y, self.euler_angles[2])
 
-        # Determine confidene interval:
+        # Determine confidence interval:
         dist_to_marker = distance((self.x, self.y), (transformed_translation[0],transformed_translation[1]))
         print(f"Distance to Marker no. {msg.id} is {dist_to_marker}")
         # Append confidence level according to distance
@@ -57,7 +61,7 @@ class Handler:
             confidence = 2.5/dist_to_marker
             
         
-        # Store transformed coordinates with corresponding ID
+        # Store transformed coordinates with the corresponding ID and confidence interval
         transformed_translation[0] = round(transformed_translation[0],2)
         transformed_translation[1] = round(transformed_translation[1],2)
         transformed_translation.append(round(confidence,2))
