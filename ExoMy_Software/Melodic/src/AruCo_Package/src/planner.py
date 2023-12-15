@@ -341,7 +341,7 @@ def generate_path(start, goal, danger_landmarks):
 
         for next_node in get_neighbors(current_node):
             new_cost = cost_so_far[current_node] + distance(current_node, next_node)
-            # Ensure no backtracking and that the new path "costs" less than others
+            # Ensure no backtracking OR that the new path "costs" less than others
             if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
                 cost_so_far[next_node] = new_cost
                 priority = new_cost + distance(next_node, goal)
