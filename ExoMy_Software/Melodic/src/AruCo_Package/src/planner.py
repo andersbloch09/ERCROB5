@@ -325,7 +325,8 @@ def generate_path(start, goal, danger_landmarks):
     frontier = [(0, start)]
     came_from = {start: None}
     cost_so_far = {start: 0}
-    
+
+    # A-star implementation
     while frontier:
         current_cost, current_node = heappop(frontier)
         dist_to_goal = distance(current_node, goal)
@@ -338,7 +339,6 @@ def generate_path(start, goal, danger_landmarks):
                 # Remove the +5 increment to each coordinate from earlier (Not ideal)
             return [(element[0]-5,element[1]-5) for element in path[::-1]]
 
-        # A-star implementation
         for next_node in get_neighbors(current_node):
             new_cost = cost_so_far[current_node] + distance(current_node, next_node)
             # Ensure no backtracking and that the new path "costs" less than others
